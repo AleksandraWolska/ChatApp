@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/chatroom.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+
+    <!--https://cdnjs.com/libraries/socket.io -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"
+        integrity="sha512-iqRVtNB+t9O+epcgUTIPF+nklypcR23H1yR1NFM9kffn6/iBhZ9bTB6oKLaGMv8JE9UgjcwfBFg/eHC/VMws+g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <script type="text/javascript">
+        let socket
+        window.addEventListener('load', function () {
+
+
+
+            console.log("dziła")
+
+            socket = io.connect('http://' + document.domain + ':' + location.port + '/chatroom');
+
+            socket.addEventListener('connect', function () {
+                socket.emit('join', {})
+            });
+            socket.addEventListener('status', function (data) {
+                const statusMessage = document.createElement("div");
+                statusMessage.className = 'message status-message'
+                statusMessage.innerHTML = data.msg;
+                document.querySelector('#chat-window').appendChild(statusMessage);
+            });
+            socket.addEventListener('message', function (data) {
+
+                const singleMessage = document.createElement("div");
+
+                if ("{{session['name']}}" == data.author) {
+                    singleMessage.className = 'single-message my-message'
+                } else{
+
+                    singleMessage.className = 'single-message'
+                }
+
+                
+
+
+
+                const messageAuthor = document.createElement("div");
+
+                //if last message is of the same authon, dont display the author
+                document.querySelector('#chat-window').lastChild.firstChild.innerHTML == data.author
+                    ? messageAuthor.className = 'message-author-nodisplay'
+                    : messageAuthor.className = 'message-author'
+                messageAuthor.innerHTML = data.author
+
+                const messageContent = document.createElement("div");
+                messageContent.className = 'message-content'
+                messageContent.innerHTML = data.msg
+
+                singleMessage.appendChild(messageAuthor)
+                singleMessage.appendChild(messageContent)
+                document.querySelector('#chat-window').appendChild(singleMessage);
+
+            });
+            document.querySelector('#send-button').addEventListener('click', function (event) {
+                text = document.querySelector('#message-input').value
+                console.log("clicked!")
+                document.querySelector('#message-input').value = ""
+                socket.emit('text', { msg: text })
+            })
+
+            document.querySelector('#message-input').addEventListener("keyup", function (event) {
+                // Number 13 is the "Enter" key on the keyboard
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    document.querySelector('#send-button').click();
+                }
+            });
+
+
+            document.querySelector('#exit-button').addEventListener('click', function (event) {
+                socket.emit('left', {}, function () {
+                    socket.disconnect();
+                    // go back to the login page
+
+                    window.location.href = 'http://' + document.domain + ':' + location.port;
+                });
+            })
+        })
+    </script>
+
+
+
+
+
+    <title>Chat App</title>
+</head>
+
+<body>
+
+    <div class="chat-container">
+        <h2 id="room-number-title">Room {{session['room']}}</h2>
+        <div class="chatbox">
+            <div id="chat-window"></div>
+            <div id="send-controls">
+
+                <input type="text" id="message-input" size="60" placeholder="write your message" />
+                <button type="button" id="send-button" class="button send-button">Send</button>
+
+            </div>
+            <button type="button" class="button exit-button" id="exit-button">Exit chat</button>
+
+        </div>
+    </div>
+
+    <script src="{{url_for('static', filename='js/chat.js')}}"></script>
+
+</body>
+
+</html>
