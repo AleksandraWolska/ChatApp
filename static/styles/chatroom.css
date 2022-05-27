@@ -1,6 +1,6 @@
 body {
     font-family: 'Nanum Gothic', sans-serif;
-    background-image: radial-gradient( circle farthest-corner at 4.3% 12.3%,  rgba(93,167,239,1) 0%, rgba(179,212,247,1) 100.2% );
+    /* background-image: radial-gradient( circle farthest-corner at 4.3% 12.3%,  rgba(93,167,239,1) 0%, rgba(179,212,247,1) 100.2% ); */
     height: 100vh;
     font-size: 16px;
     display: flex;
@@ -10,30 +10,42 @@ body {
     
 }
 
+.chat-container {
+    width: 600px;
+}
+
 .chatbox {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    
+   
+    width: 100%;
+
 }
 
 #chat-window {
     display: flex;
     flex-direction: column;
-    border: 1px solid gray;
-    width: 500px;
-    height: 500px;
+    
+    width: 100%;
+    height: 65vh;
     background-color: rgba(255, 255, 255, 0.4);
     border-radius: 15px;
-    box-shadow: 10px, 10px 10px, rgba(0, 0, 0, .4);
+    box-shadow: inset 1px 1px 15px rgba(0, 0, 0, .3);
+    overflow: scroll;
+    padding: 10px 10px;
+    box-sizing: border-box;
     
 
 }
 
 
 
+
+
 .status-message{
-  max-width: 350px;
+    max-width: 350px;
     width: fit-content;
     align-self: center;
     font-size: .8em;
@@ -45,6 +57,7 @@ body {
 .single-message {
     max-width: 350px;
     width: fit-content;
+    text-align: left;
     margin: 2px 5px;
 
 }
@@ -55,11 +68,22 @@ body {
 
 
 .single-message .message-content {
-    border: .5px solid #dddddd;
-    border-radius: 6px;
-    background-color: #99ccff;
-    padding: 5px 10px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .3);
+    border-radius: 30px;
+    
+    
+    padding: 10px 15px;
+    font-size: .9em;
+    background-color: #fff7ab;
 }
+
+.single-message.my-message .message-content {
+    align-self: flex-end;
+    background-color: #ffffff;
+}
+
+
+
 .message-author {
    padding: 10px 10px 2px 10px;
    font-size: .8em;
@@ -68,3 +92,296 @@ body {
 .message-author-nodisplay {
     display: none;
  }
+
+
+ .message-image {
+    height: 200px;
+    max-width: 100%;
+    border-radius: 20px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, .2);
+    overflow: hidden;
+   
+ }
+
+ .message-image img {
+    height:100%; 
+    max-width:100%;
+    
+    object-fit: contain;
+ }
+
+
+ .message-image.clicked {
+    position: fixed;
+    max-height: 60vh ;
+    max-width: 60vw;
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#search-total {
+    width: 100%;
+    position: relative;
+    
+}
+.search-container{
+    
+    background: transparent;
+    height: 30px;
+    
+    border-radius: 30px;
+    padding: 10px 20px;
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    cursor: pointer;
+    transition: 0.8s;
+    /* box-shadow: 4px 4px 6px 0 rgba(0, 0, 0, .5),
+              -4px -4px 6px 0 rgba(116, 125, 136, .2); */
+    
+
+    
+}
+
+
+
+.search-container .search-input{
+    background: transparent;
+    border: none;
+    outline:none;
+    width: 0px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: 0.8s;
+
+}
+.search-container:hover > .search-input{
+    width: 100%;
+}
+
+#search-total:focus-within > .search-container, #search-total:hover > .search-container  {
+    background-color: #fff;
+    width: calc(100%-50px);
+
+    box-shadow:  4px 4px 6px 0 rgba(255,255,255,.3),
+              -4px -4px 6px 0 rgba(116, 125, 136, .2), 
+    inset -4px -4px 6px 0 rgba(255,255,255,.2),
+    inset 4px 4px 6px 0 rgba(0, 0, 0, .2);
+}
+
+
+.search-input:focus {
+    width: 100%
+}
+
+
+.search-container:hover{
+  animation: hoverShake 0.15s linear 3;
+  width: calc(100%-50px);
+  background-color: #fff;
+}
+
+
+.search-btn  {
+    height: 100%;
+}
+
+.search-btn img {
+    height: 100%
+}
+
+/* .search-result {
+    display: none;
+
+
+} */
+
+
+.search-result {
+    display: none;
+}
+
+.search-result.active {
+    width: 100%;
+    height: -moz-fit-content;
+    height: fit-content;
+    min-height: 40px;
+    max-height: 400px;
+    display: flex;
+    position: absolute;
+    top: 50px;
+  
+    background-color: #ffffff;
+    z-index: 1;
+    border-radius: 15px;
+    display: block;
+    font-size: .9em;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    box-shadow: 10px 10px 50px rgba(0, 0, 0, .2);
+
+    
+
+}
+
+#close-search {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+#close-search img {
+    height: 15px;
+}
+
+
+
+
+
+
+
+
+#send-controls {
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 20px 0;
+    align-items: center;
+    width: 100%;
+
+}
+
+
+
+.file-upload {
+    height: 100%;
+}
+
+.file-upload img {
+    height: 100%;
+    cursor: pointer;
+    transition: .3s
+}
+
+.file-upload img:hover {
+    transform: scale(1.1)
+    
+}
+
+
+input[type="file"] {
+    display: none
+}
+
+
+.message-container {
+    background: #ffffff;
+    height: 30px;
+    width: fit-content;
+    border-radius: 30px;
+    padding: 10px 20px;
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    cursor: pointer;
+    transition: 0.8s;
+    width: calc(100% - 100px);
+    box-shadow:  2px 2px 6px 0 rgba(0, 0, 0, .2);
+}
+
+
+
+
+.message-container .message-input{
+    background: #fff;
+    border: none;
+    outline:none;
+    width: 90%;
+    font-weight: 500;
+    font-size: 16px;
+    transition: 0.8s;
+    width: 100%;
+
+}
+
+
+
+.message-container:focus-within{
+    background-color: #fff;
+    
+
+    box-shadow:    2px 2px 6px 0 rgba(0, 0, 0, .2),
+    inset -4px -4px 6px 0 rgba(255,255,255,.2),
+    inset 4px 4px 6px 0 rgba(0, 0, 0, .2);
+  }
+
+
+.send-btn  {
+    height: 100%;
+}
+
+.send-btn img {
+    height: 100%;
+    transition: .4s;
+}
+
+.send-btn img:hover {
+    transform: scale(1.1);
+}
+
+
+
+
+
+.exit-button {
+    cursor: pointer;
+    width: max-content;
+    align-items: center;
+    height: 15px;
+    
+    display: flex;
+    flex-direction: row;
+    border-radius: 15px;
+
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, .1);
+    padding: 10px 10px;
+    transition: .4s;
+}
+
+.exit-button img {
+    height: 90%;
+    margin-left: 10px;
+}
+
+.exit-button p {
+    margin: 0;
+    font-size: .8em;
+}
+
+.exit-button:hover {
+    transform: scale(1.05);
+}
+
+
+
+
+
+
+
