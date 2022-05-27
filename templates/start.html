@@ -1,36 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles/start.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/start.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
     <title>Chat App</title>
 </head>
 
-<header>
-    <logo/>
-    <div class="header-main">
-        <div id="header-chatroom">CHATROOMS</div>
-        <div id="header-messenger">MESSENGER</div>
-        <div id="code-link">CODE</div>
-    </div>
-</header>
+
+
 <body class="body-chat">
     <div class="form-container">
         <h1 class="chat-title">Join chat!</h1>
         <form class="form" action="{{url_for('chatroom')}}" method="POST">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" class="form-field" placeholder="" required autofocus>
-            <br>
-            <label for="room">Room number:</label>
-            <input type="text" id="room" name="room" class="form-field" placeholder="" required>
-            <button class="join-button" value="submit">Join room</button>
+            <div id="form-content">
+                <div>
+                    <label for="name">Your name:</label>
+                    <input type="text" id="name" name="name" class="form-field" placeholder="" required autofocus>
+                </div>
+                <div>
+                    <label for="room">Room number:</label>
+                    <input type="text" id="room" name="room" class="form-field" placeholder="" required>
+
+                </div>
+
+
+
+
+                <label id="join-label">
+                    <input type="submit" id="join-button-input" value="submit" />
+
+                    <div class="button join-button" id="join-button">
+                        <p> Join chat </p>
+                        <img src="/static/angle-right.png" />
+                    </div>
+
+                </label>
+
+
+
+
+            </div>
         </form>
     </div>
-    
+
 </body>
+
 </html>

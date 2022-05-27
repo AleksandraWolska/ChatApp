@@ -1,4 +1,82 @@
+
 body {
-    
     font-family: 'Nanum Gothic', sans-serif;
+    /* background-image: radial-gradient( circle farthest-corner at 4.3% 12.3%,  rgba(93,167,239,1) 0%, rgba(179,212,247,1) 100.2% ); */
+    height: 100vh;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 100vw;
+    
+}
+
+#join-button-input {
+   display: none;
+}
+
+.form-container {
+    height: min-content;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, .3);
+    margin: 40px;
+    border-radius: 20px;
+    padding: 30px 5px 10px 5px;
+}
+
+
+
+#join-label {
+
+    
+    
+    
+
+}
+
+
+.join-button {
+    justify-self: center;
+    cursor: pointer;
+    width: max-content;
+    align-items: center;
+    height: 15px;
+    
+    display: flex;
+    flex-direction: row;
+    border-radius: 15px;
+
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, .2);
+    padding: 10px 10px;
+    transition: .4s;
+}
+
+.join-button img {
+    height: 90%;
+    margin-left: 10px;
+}
+
+.join-button p {
+    margin: 0;
+    font-size: .8em;
+}
+
+.join-button:hover {
+    transform: scale(1.05);
+}
+
+
+
+#form-content {
+    display: flex ;
+    flex-direction: column;
+    justify-content: center;
+    align-items:flex-end;
+    width: 350px;
+    padding: 30px;
+    
+    
+
+}
+#form-content * {
+    margin: 5px;
 }
