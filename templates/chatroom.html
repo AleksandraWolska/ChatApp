@@ -130,7 +130,7 @@
 
                 singleMessage.appendChild(messageAuthor)
                 singleMessage.appendChild(messageContent)
-                
+
                 chatWindow.appendChild(singleMessage);
                 chatWindow.scrollTop = chatWindow.scrollHeight
 
@@ -171,16 +171,22 @@
             });
 
             document.querySelector('#search-button').addEventListener('click', function () {
+                 searched = document.querySelector('.search-input').value
+                 
+                document.querySelector('.search-container').classList.add('active')
+
+
                 matches = []
-                searched = document.querySelector('#search-input').value
+               
+                if ( searched == "" ) return
 
                 matches = messages.filter((elem) => {
                     return elem.msg.toLowerCase().includes(searched.toLowerCase())
                 })
                 console.log(matches)
-
+                console.log(document.querySelector('.search-container').classList)
                 showMatches(matches)
-
+                searched = ""
             })
 
 
@@ -192,6 +198,7 @@
                 }
 
                 wall.classList.add('active')
+                
 
                 if (!matches.length) {
                     let elem = document.createElement('div')
@@ -209,7 +216,7 @@
                     )
                 }
 
-                
+
 
 
             }
@@ -221,6 +228,10 @@
                 const element = document.querySelector('#search-result')
                 console.log("trying to remove")
                 element.classList.remove('active')
+                document.querySelector('.search-container').classList.remove('active')
+                console.log("closed")
+                console.log(document.querySelector('.search-container').classList)
+            
             })
 
         })
@@ -291,7 +302,7 @@
 
         </div>
 
-
+    </div>
 
 </body>
 

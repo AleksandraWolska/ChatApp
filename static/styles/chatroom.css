@@ -33,12 +33,37 @@ body {
     background-color: rgba(255, 255, 255, 0.4);
     border-radius: 15px;
     box-shadow: inset 1px 1px 15px rgba(0, 0, 0, .3);
-    overflow: scroll;
+    overflow-y: auto;
     padding: 10px 10px;
     box-sizing: border-box;
     
+    
 
 }
+
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+   
+    
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    /* background: rgba(0, 0, 0, .05) */
+    background-color: transparent;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #ddd;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #888;
+    width: 5px;
+  }
 
 
 
@@ -123,22 +148,18 @@ body {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 #search-total {
     width: 100%;
     position: relative;
     
+
 }
+
+
+
+
+
+
 .search-container{
     
     background: transparent;
@@ -153,9 +174,6 @@ body {
     transition: 0.8s;
     /* box-shadow: 4px 4px 6px 0 rgba(0, 0, 0, .5),
               -4px -4px 6px 0 rgba(116, 125, 136, .2); */
-    
-
-    
 }
 
 
@@ -174,7 +192,9 @@ body {
     width: 100%;
 }
 
-#search-total:focus-within > .search-container, #search-total:hover > .search-container  {
+
+
+.search-container.active, .search-container:focus-within{
     background-color: #fff;
     width: calc(100%-50px);
 
@@ -185,13 +205,13 @@ body {
 }
 
 
-.search-input:focus {
+.search-container.active .search-input, .search-input:focus {
     width: 100%
 }
 
 
 .search-container:hover{
-  animation: hoverShake 0.15s linear 3;
+  
   width: calc(100%-50px);
   background-color: #fff;
 }
@@ -217,6 +237,7 @@ body {
     height: fit-content;
     min-height: 40px;
     max-height: 400px;
+    overflow: scroll;
     display: flex;
     position: absolute;
     top: 50px;
@@ -244,9 +265,6 @@ body {
 #close-search img {
     height: 15px;
 }
-
-
-
 
 
 
@@ -379,4 +397,72 @@ input[type="file"] {
 
 
 
+@media only screen and (max-width: 750px) {
 
+ 
+    body {
+    padding: 0;
+    margin: 0;
+    display: inline-block; 
+    }
+
+    #search-total {
+        position: fixed;
+        top: 10px;
+        left: 8px;
+        width: 95vw;
+    }
+
+
+    .chat-container {
+        width: 95vw;
+        height: calc(100vh - 80px);
+        box-sizing: padding-box;
+        margin: auto;
+    }
+
+    .chatbox {
+       
+        height: calc(100% - 70px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;   
+        width: 100%;   
+    }
+
+
+
+   #chat-window {
+        width: 95vw;
+        margin: auto;
+        box-sizing: padding-box;
+        height: calc(100% - 50px); 
+        margin: 0;
+       
+    }
+    #send-controls{
+        position: fixed;
+        bottom: 0px;
+        width: 90vw;
+    }
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+}

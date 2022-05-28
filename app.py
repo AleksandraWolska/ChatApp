@@ -41,12 +41,6 @@ def chatroom():
             return redirect(url_for('start'))
 
 
-@app.route('/messenger', methods=['GET', 'POST'])
-def messenger():
-    pass
-
-
-
 
 
 @socketio.on('connect')
@@ -82,7 +76,7 @@ def text(message):
 @socketio.on('image-upload', namespace='/chatroom')
 def imageUpload(image):
     room= session.get('room')
-    emit('send-image', {'msg': image, 'author': session.get('name')}, room=room)
+    emit('send-image', {'msg': image, 'author': session.get('name')}, room=room, broadcast=True)
 
 # @socketio.on('image-upload')
 # def imageUpload(image):
