@@ -9,32 +9,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
-
-    <!--https://cdnjs.com/libraries/socket.io -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
 
-
     <script type="text/javascript">
-
-
         let socket
         const messages = []
         let matches = []
 
-
         window.addEventListener('load', function () {
 
             socket = io.connect('http://' + document.domain + ':' + location.port + '/chatroom');
-            document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 
 
-
+            //nadsłuchiwanie dołączenia innych osób, wywołanie "join" w pythonie
             socket.addEventListener('connect', function () {
                 socket.emit('join', {})
             });
 
-
+            //dodanie do DOM statusu
             socket.addEventListener('status', function (data) {
                 messages.push(data)
                 const statusMessage = document.createElement("div");
@@ -44,12 +37,11 @@
             });
 
 
+            //dodanie do DOM wiadomości
             socket.addEventListener('message', function (data) {
-
                 if (!data.msg || !data.msg.trim().length) {
                     return
                 }
-
                 chatWindow = document.querySelector('#chat-window')
                 messages.push(data)
                 const singleMessage = document.createElement("div");
@@ -60,7 +52,7 @@
 
                 const messageAuthor = document.createElement("div");
 
-                //if last message is of the same authon, dont display the author
+                //nie powtarzaj autorów jeśli wysłał jedną wiadomość po drugiej
                 chatWindow.lastChild.firstChild.innerHTML == data.author
                     ? messageAuthor.className = 'message-author-nodisplay'
                     : messageAuthor.className = 'message-author'
@@ -72,29 +64,30 @@
 
                 singleMessage.appendChild(messageAuthor)
                 singleMessage.appendChild(messageContent)
-                chatWindow.appendChild(singleMessage);
+                chatWindow.appendChild(singleMessage)
                 chatWindow.scrollTop = chatWindow.scrollHeight
-
             });
 
 
 
             //=====SENDING IMAGES =============================================================================================
+
+
+            document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
             socket.on("send-image", function (image) {
-                console.log("append image")
                 appendImageMessage(image)
             })
 
-
+            //pobierz wiadomość i wyemituj do pythona
             function handleFileSelect() {
-                console.log("handled")
+                console.log("File select handled")
 
                 const file = document.querySelector('input[type=file]').files[0];
                 const reader = new FileReader();
 
                 reader.addEventListener("load", function () {
                     socket.emit('image-upload', reader.result)
-                    console.log("emitted")
                 }, false);
                 if (file) {
                     reader.readAsDataURL(file);
@@ -102,6 +95,8 @@
             }
 
 
+
+            //dodaj zdjęcie do DOM
             function appendImageMessage(data) {
                 console.log("appendImageMessage")
                 console.log(data)
@@ -133,28 +128,31 @@
 
                 chatWindow.appendChild(singleMessage);
                 chatWindow.scrollTop = chatWindow.scrollHeight
-
-
-
             }
 
 
+
+
+            //======SEND CONTROLS===============================================================================
+
+            //wyemituj tekst wiadomości do pythona po kliknięciu przycisku wysyłającego
             document.querySelector('#send-button').addEventListener('click', function (event) {
                 text = document.querySelector('#message-input').value
-                console.log("clicked!")
                 document.querySelector('#message-input').value = ""
                 socket.emit('text', { msg: text })
             })
 
+
+            //spraw, żeby enter działał jak przycisk
             document.querySelector('#message-input').addEventListener("keyup", function (event) {
-                // Number 13 is the "Enter" key on the keyboard
+                //13 to Enter
                 if (event.keyCode === 13) {
                     event.preventDefault();
                     document.querySelector('#send-button').click();
                 }
             });
 
-
+            //wyemituj informacje o wyjściu z pokoju do pythona
             document.querySelector('#exit-button').addEventListener('click', function () {
                 socket.emit('left', {}, function () {
                     socket.disconnect();
@@ -162,6 +160,29 @@
                 });
             })
 
+
+            //======SEARCH=======================================================================================================
+
+
+            //przeszukanie wiadomości
+            document.querySelector('#search-button').addEventListener('click', function () {
+                searched = document.querySelector('.search-input').value
+
+                //dodanie klasy css
+                document.querySelector('.search-container').classList.add('active')
+
+                matches = []
+                if (searched == "") return
+
+                matches = messages.filter((elem) => {
+                    return elem.msg.toLowerCase().includes(searched.toLowerCase())
+                })
+                showMatches(matches)
+                searched = ""
+            })
+
+
+            //spraw by enter działał jak przycisk
             document.querySelector('#search-input').addEventListener("keyup", function (event) {
                 // Number 13 is the "Enter" key on the keyboard
                 if (event.keyCode === 13) {
@@ -170,36 +191,19 @@
                 }
             });
 
-            document.querySelector('#search-button').addEventListener('click', function () {
-                 searched = document.querySelector('.search-input').value
-                 
-                document.querySelector('.search-container').classList.add('active')
-
-
-                matches = []
-               
-                if ( searched == "" ) return
-
-                matches = messages.filter((elem) => {
-                    return elem.msg.toLowerCase().includes(searched.toLowerCase())
-                })
-                console.log(matches)
-                console.log(document.querySelector('.search-container').classList)
-                showMatches(matches)
-                searched = ""
-            })
-
 
             function showMatches(matches) {
                 const wall = document.querySelector('#search-result')
 
+                //usunięcie poprzednich znaczników z poprzedniego wyszukania
                 while (wall.childElementCount > 1) {
                     wall.lastChild.remove()
                 }
 
+                //dodanie klasy css
                 wall.classList.add('active')
-                
 
+                //dodanie elementów do DOM
                 if (!matches.length) {
                     let elem = document.createElement('div')
                     elem.className = "one-result"
@@ -211,28 +215,25 @@
                         elem.className = "one-result"
                         elem.innerHTML = match.author + " - " + match.msg
                         wall.appendChild(elem)
-
                     }
                     )
                 }
 
-
-
-
             }
 
-
-
-
+            //zamknięcie wyszukiwania
             document.querySelector("#close-search").addEventListener('click', function () {
                 const element = document.querySelector('#search-result')
-                console.log("trying to remove")
                 element.classList.remove('active')
                 document.querySelector('.search-container').classList.remove('active')
-                console.log("closed")
-                console.log(document.querySelector('.search-container').classList)
-            
             })
+
+
+            //wyjscie z pokoju
+            document.getElementById('exit-button').addEventListener('click', function () {
+                socket.emit('left', {})
+            })
+
 
         })
 
@@ -242,25 +243,18 @@
 
 
 
-    <title>Chat App</title>
+<title>Chat App</title>
 </head>
-
 <body>
-
     <div class="chat-container">
         <h2 id="room-number-title">Room {{session['room']}}</h2>
         <div class="chatbox">
 
-
-
             <div id="search-total">
-
-
                 <div class="search-container">
                     <input onfocusin="this.value=''" id="search-input" class="search-input" type="text"
                         placeholder="Search for messages....">
                     <div class="search-btn" type="button" id="search-button">
-
                         <img src="/static/search.png" />
                     </div>
                 </div>
@@ -273,10 +267,7 @@
 
             </div>
 
-
-
             <div id="chat-window"></div>
-
 
             <div id="send-controls">
                 <label class="file-upload">
@@ -298,12 +289,7 @@
                 <img src="/static/sign-out.png" />
 
             </div>
-
-
         </div>
-
     </div>
-
 </body>
-
 </html>

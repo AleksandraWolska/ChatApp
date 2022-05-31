@@ -11,22 +11,22 @@ app.config['SESSION_TYPE'] = 'filesystem'
 
 
 messageList = []
-matchesList = []
-
-
 Session(app)
 
-socketio = SocketIO(app,always_connect=True, engineio_logger=True)
 
+socketio = SocketIO(app, always_connect=True)
 
+#wejście do aplikacji, wyrenderowanie templete 'start.html'
 @app.route('/', methods=['GET', 'POST'])
 def start():
     return render_template('start.html')
 
 
+# wypełnienie formularza
 @app.route('/chatroom', methods=['GET', 'POST'])
 def chatroom():
-    #jeśli została wywołana metoda post (w momencie wysłania formularza z pokojem)
+    # w momencie wysłania formularza wygeneruje się metoda post, elementy formularza zostają przypisane do zmiennych sesji
+    # po czym następuje wyrenderowanie template 'chatroom.html' z przekazanymi zmiennymi sesji
     if(request.method=="POST"):
         name = request.form['name']
         room = request.form['room']
@@ -34,6 +34,8 @@ def chatroom():
         session['name'] = name
         session['room'] = room
         return render_template('chatroom.html', session = session)
+
+    # zabezpieczenie
     else:
         if(session.get('name') is not None):
             return render_template('chatroom.html', session=session)
@@ -43,16 +45,26 @@ def chatroom():
 
 
 
+
+# przy połączeniu
 @socketio.on('connect')
 def connected():
-    print('connect')
+    #lista wiadomości (ulotna baza danych) zostaje zresetowana
+    messageList = []
+    print('Connection established!')
     
+
+
+# sprawdzenie poprawnego odłączenia
 @socketio.on('disconnect')
 def disconnect():
-    print('disconnect')
+    print('Disconnected from session')
 
 
 
+
+# wyemitowanie wiadomości (statusu) o dołączeniu użytkowanika
+# namespace odnosi sie do miejsca, gdzie nadsłuchujemy 
 @socketio.on('join', namespace='/chatroom')
 def join(message):
     room = session.get('room')
@@ -61,49 +73,53 @@ def join(message):
 
 
 
+
+# wyemitowanie wiadomości
 @socketio.on('text', namespace='/chatroom')
 def text(message):
+    #jeśli wiadomość jest pusta, odrzuć
     if (not message['msg']): 
         return
-    room = session.get('room')  
+
+    room = session.get('room')
+
+    # pobranie wiadomości
     newMessage = {'msg': message['msg'], 'author': session.get('name')}
+
+    # dodanie wiadomości do listy wszystkich wiadomości sesji - "ulotna baza danych", utrzymywana tylko podczas sesji
     messageList.append(newMessage)
     print(messageList)
+
+    #wyemitowanie wiadomości, która zostaje wyświetlona w HTML
     emit('message', newMessage, room=room)
 
 
 
+
+# wyemitowanie wiadomości ze zdjęciem - wczytane zostało za pomocą <input type="file"> 
+# i przekształcone do formatu DataURL, czyli tekstowego opisu pliku
 @socketio.on('image-upload', namespace='/chatroom')
 def imageUpload(image):
     room= session.get('room')
     emit('send-image', {'msg': image, 'author': session.get('name')}, room=room, broadcast=True)
 
-# @socketio.on('image-upload')
-# def imageUpload(image):
-#     emit('send-image', image, broadcast = True)
 
 
 
-
+# funkcja wykonywana podczas wyjścia z pokoju
 @socketio.on('left', namespace='/chatroom')
 def left(message):
     room = session.get('room')
-    print(room)
     name = session.get('name')
-    leave_room(room)
+
+    #wyczyszczeniee tablicy sesji
     session.clear()
+    #wyemitowanie wiadomosci (statusu) o wyjściu
     emit('status', {'msg': name + ' has left the room', 'author': session.get('name')}, room=room)
 
 
 
 
-@socketio.on('message')
-def handleMessage(data):
-    print('received message: ' + data)
-    
-
-
 
 if __name__ == '__main__':
-    
     socketio.run(app, debug=True)
